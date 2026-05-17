@@ -1,38 +1,61 @@
-# To run and test the code you need to update 4 places:
-# 1. Change MY_EMAIL/MY_PASSWORD to your own details.
-# 2. Go to your email provider and make it allow less secure apps.
-# 3. Update the SMTP ADDRESS to match your email provider.
-# 4. Update birthdays.csv to contain today's month and day.
-# See the solution video in the 100 Days of Python Course for explainations.
-
-
-from datetime import datetime
-import pandas
-import random
 import smtplib
-import os
+import datetime as dt
+import time
+import random
+import pandas
 
-# import os and use it to get the Github repository secrets
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
 
-today = datetime.now()
-today_tuple = (today.month, today.day)
 
-data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
-if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
-    with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
+names=pandas.read_csv("/Users/selimtas/Downloads/birthday-wisher-extrahard-start/birthdays.csv")
+names=names.to_dict(orient="records")
+print(names)
+def writem(name):
+    txts=["/Users/selimtas/Downloads/birthday-wisher-extrahard-start/letter_templates/letter_3.txt","/Users/selimtas/Downloads/birthday-wisher-extrahard-start/letter_templates/letter_2.txt","/Users/selimtas/Downloads/birthday-wisher-extrahard-start/letter_templates/letter_1.txt"]
+    with open(random.choice(txts),"r") as selim:
+        return selim.read().replace("[NAME]",name)
 
-    with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
-        connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
-        )
+
+a=0
+while True:
+    
+    now=dt.datetime.now()
+    day=now.day
+    
+    month=now.month
+    
+    for i in names:
+        if month==i["month"] and day==i["day"]:
+            
+                
+                myemailaccount="selimtas.2149@gmail.com"
+                sentemail=i["email"]
+                txt=writem(i["name"])
+                password="rnovbfjcqxjbdihx"
+                with smtplib.SMTP("smtp.gmail.com") as email:
+                    email.starttls()
+                    email.login(user=myemailaccount,password=password)
+
+                    email.sendmail(from_addr=myemailaccount,
+                                    to_addrs=sentemail,
+                                    msg=f"Subject:Test\nContent-Type: text/plain; charset=utf-8\n\n{txt}".encode("utf-8"))
+                    
+    time.sleep(60*60*24)
+            
+    """if a%2==0:
+        time.sleep(60*60*1)
+        
+    else:
+        time.sleep(60*60*23)
+    with open("/Users/selimtas/Downloads/Birthday Wisher (Day 32) start/quotes.txt","r") as selim:
+        lines=[i.strip() for i in selim.readlines()]
+"""
+   
+
+    
+
+
+
+
+
+
+
